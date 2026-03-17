@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sankalp — UPSC Prep Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F5F6FA;
+      --bg2: #ECEEF5;
+      --card: #FFFFFF;
+      --card-hover: #F0F2F8;
+      --border: rgba(0,0,0,0.08);
+      --text: #1A1D2E;
+      --muted: #8A90A2;
+      --accent: #E85D2F;
+      --accent2: #F5A623;
+      --success: #2BA86D;
+      --c-math: #0097A7;
+      --c-geo: #1976D2;
+      --c-polity: #E64A19;
+      --c-env: #388E3C;
+      --c-sci: #7B1FA2;
+      --c-eco: #F57C00;
+      --c-hist: #C62828;
+      --c-igeo: #0097A7;
+      --c-ca: #C2185B;
+      --c-daily: #546E7A;
+      --c-pts: #512DA8;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100dvh;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:'';
+      position:fixed;inset:0;
+      background:
+        radial-gradient(ellipse 60% 40% at 15% 10%, rgba(232,93,47,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 85%, rgba(25,118,210,.05) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(245,166,35,.04) 0%, transparent 70%);
+      pointer-events:none;z-index:0;
+    }
+
+    /* ── QUOTE BANNER ── */
+    .quote-banner{
+      position:relative;z-index:5;
+      margin:12px 14px;
+      padding:18px 20px;
+      background:linear-gradient(135deg,#E85D2F,#F5A623);
+      border-radius:18px;
+      animation:slideDown .5s cubic-bezier(.16,1,.3,1);
+      box-shadow:0 4px 18px rgba(232,93,47,.28);
+    }
+    @keyframes slideDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);}}
+    .quote-icon{font-size:20px;display:block;margin-bottom:8px;color:rgba(255,255,255,.75);}
+    .quote-text{
+      font-family:'DM Sans',sans-serif;
+      font-style:normal;
+      font-weight:600;
+      font-size:15px;line-height:1.6;
+      color:#fff;margin-bottom:8px;
+      letter-spacing:.1px;
+    }
+    .quote-author{font-size:12px;color:rgba(255,255,255,.72);font-weight:500;letter-spacing:.4px;}
+
+    /* ── HEADER ── */
+    .app-header{
+      position:sticky;top:0;z-index:100;
+      background:rgba(245,246,250,.94);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      padding:10px 16px;
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .app-title{
+      font-family:'Playfair Display',serif;
+      font-size:22px;font-weight:700;
+      background:linear-gradient(135deg,#FF6B35,#FFB830);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .header-right{text-align:right;}
+    .overall-pct{font-size:22px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1;}
+    .overall-lbl{font-size:10.5px;color:var(--muted);}
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav{
+      position:fixed;bottom:0;left:0;right:0;z-index:100;
+      background:rgba(245,246,250,.97);
+      backdrop-filter:blur(20px);
+      border-top:1px solid var(--border);
+      display:flex;
+      padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+    }
+    .nav-btn{
+      flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+      padding:6px 4px;background:none;border:none;
+      color:var(--muted);font-family:'DM Sans',sans-serif;font-size:10.5px;
+      cursor:pointer;transition:all .2s;border-radius:12px;
+    }
+    .nav-btn.active{color:var(--accent);}
+    .nav-icon{font-size:20px;transition:transform .2s;}
+    .nav-btn.active .nav-icon{transform:scale(1.12);}
+    .nav-badge{
+      display:none;position:absolute;top:2px;right:14px;
+      min-width:16px;height:16px;padding:0 4px;
+      background:var(--accent);color:#fff;
+      font-size:9px;font-weight:700;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .nav-btn{position:relative;}
+
+    /* ── MAIN CONTENT ── */
+    .main-content{padding-bottom:calc(72px + env(safe-area-inset-bottom));position:relative;z-index:1;}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;animation:tabIn .3s ease;}
+    @keyframes tabIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+    /* ── DATE NAVIGATION ── */
+    .date-nav{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px 10px;gap:10px;
+    }
+    .date-nav-btn{
+      width:42px;height:42px;border-radius:12px;
+      border:1px solid var(--border);background:var(--card);
+      color:var(--text);font-size:22px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .18s;flex-shrink:0;
+    }
+    .date-nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .date-nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+    .date-center{flex:1;text-align:center;}
+    .date-main{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+    .today-pill{
+      font-family:'DM Sans',sans-serif;
+      font-size:10px;font-weight:600;font-style:normal;
+      padding:2px 8px;border-radius:20px;
+      background:rgba(255,107,53,.2);border:1px solid rgba(255,107,53,.4);
+      color:var(--accent);letter-spacing:.3px;
+    }
+    .date-day{font-size:12px;color:var(--muted);margin-top:2px;}
+
+    /* ── DAY PROGRESS ── */
+    .day-progress-wrap{margin:0 14px 10px;}
+    .day-progress{
+      padding:14px 16px;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:0 1px 4px rgba(0,0,0,.05);
+    }
+    .progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .progress-label{font-size:12.5px;color:var(--muted);font-weight:500;}
+    .progress-count{font-size:13px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;}
+    .progress-track{height:5px;background:rgba(0,0,0,.08);border-radius:100px;overflow:hidden;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;transition:width .6s cubic-bezier(.16,1,.3,1);min-width:0;}
+    .progress-fill.full{background:linear-gradient(90deg,var(--success),#5AF58A);}
+
+    /* ── CATEGORY GROUP ── */
+    .cat-section{margin:0 14px 6px;}
+    .cat-header{display:flex;align-items:center;gap:7px;margin-bottom:6px;padding:0 2px;}
+    .cat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+    .cat-name{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);}
+
+    /* ── TASK CARD ── */
+    .task-card{
+      display:flex;align-items:flex-start;gap:12px;
+      padding:13px 14px;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:12px;margin-bottom:7px;
+      cursor:pointer;transition:background .15s,transform .12s;
+      position:relative;overflow:hidden;
+      -webkit-user-select:none;user-select:none;
+      box-shadow:0 1px 4px rgba(0,0,0,.05);
+    }
+    .task-card::before{
+      content:'';position:absolute;left:0;top:0;bottom:0;
+      width:3px;border-radius:3px 0 0 3px;
+    }
+    .task-card:active{transform:scale(.98);background:var(--card-hover);}
+    .task-card.done{opacity:.55;}
+    .task-cb{
+      width:22px;height:22px;border-radius:7px;
+      border:2px solid rgba(0,0,0,.18);
+      flex-shrink:0;margin-top:1px;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .22s cubic-bezier(.34,1.56,.64,1);
+    }
+    .task-card.done .task-cb{background:var(--success);border-color:var(--success);}
+    .checkmark{display:none;color:#fff;font-size:12px;font-weight:700;line-height:1;}
+    .task-card.done .checkmark{display:block;}
+    .task-txt{flex:1;font-size:13.5px;line-height:1.45;color:var(--text);transition:all .2s;}
+    .task-card.done .task-txt{text-decoration:line-through;color:var(--muted);}
+
+    /* category left-border colours */
+    .bg-math::before{background:var(--c-math);}
+    .bg-geo::before{background:var(--c-geo);}
+    .bg-polity::before{background:var(--c-polity);}
+    .bg-env::before{background:var(--c-env);}
+    .bg-sci::before{background:var(--c-sci);}
+    .bg-eco::before{background:var(--c-eco);}
+    .bg-hist::before{background:var(--c-hist);}
+    .bg-igeo::before{background:var(--c-igeo);}
+    .bg-ca::before{background:var(--c-ca);}
+    .bg-daily::before{background:var(--c-daily);}
+    .bg-pts::before{background:var(--c-pts);}
+
+    @keyframes checkPop{0%{transform:scale(.5);}60%{transform:scale(1.25);}100%{transform:scale(1);}}
+    .task-card.just-done .task-cb{animation:checkPop .35s cubic-bezier(.34,1.56,.64,1);}
+
+    /* ── REST DAY ── */
+    .rest-day{text-align:center;padding:50px 24px;}
+    .rest-icon{font-size:52px;margin-bottom:14px;}
+    .rest-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px;}
+    .rest-text{font-size:13.5px;color:var(--muted);line-height:1.7;}
+
+    /* ── CALENDAR VIEW ── */
+    .cal-section-hdr{padding:14px 16px 6px;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;}
+    .cal-item{
+      margin:0 14px 10px;border-radius:16px;
+      border:1px solid var(--border);background:var(--card);overflow:hidden;
+      box-shadow:0 1px 4px rgba(0,0,0,.05);
+    }
+    .cal-hdr{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:13px 15px;cursor:pointer;transition:background .15s;
+    }
+    .cal-hdr:active{background:var(--card-hover);}
+    .cal-date-info h3{font-family:'Playfair Display',serif;font-size:16px;display:flex;align-items:center;gap:7px;}
+    .cal-date-info p{font-size:11px;color:var(--muted);margin-top:2px;}
+    .cal-right{display:flex;align-items:center;gap:8px;}
+    .cal-pill{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:20px;}
+    .cal-pill.done-pill{background:rgba(61,186,126,.15);color:var(--success);}
+    .cal-pill.all-pill{background:rgba(61,186,126,.25);color:var(--success);}
+    .cal-pill.zero-pill{background:rgba(255,255,255,.06);color:var(--muted);}
+    .expand-arr{font-size:12px;color:var(--muted);transition:transform .25s;}
+    .cal-item.open .expand-arr{transform:rotate(180deg);}
+    .mini-prog{height:2px;background:rgba(0,0,0,.07);}
+    .mini-prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;}
+    .cal-tasks{display:none;padding:4px 12px 12px;}
+    .cal-item.open .cal-tasks{display:block;}
+
+    /* ── PENDING VIEW ── */
+    .pending-top{padding:16px 16px 8px;text-align:center;}
+    .pending-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px;}
+    .pending-sub{font-size:13px;color:var(--muted);}
+    .pending-badge{
+      display:inline-block;margin-top:10px;
+      padding:4px 16px;border-radius:20px;
+      background:rgba(232,93,47,.1);border:1px solid rgba(232,93,47,.25);
+      color:var(--accent);font-size:13.5px;font-weight:700;
+    }
+    .pending-group{margin:0 14px 14px;}
+    .pending-date-hdr{
+      font-size:11.5px;font-weight:600;text-transform:uppercase;
+      letter-spacing:.7px;color:var(--muted);
+      padding:6px 4px 8px;border-bottom:1px solid var(--border);margin-bottom:8px;
+    }
+    .pending-date-hdr span{color:var(--accent);}
+
+    /* ── EMPTY STATE ── */
+    .empty-state{text-align:center;padding:60px 24px;}
+    .empty-icon{font-size:56px;margin-bottom:14px;}
+    .empty-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px;}
+    .empty-text{font-size:13.5px;color:var(--muted);line-height:1.7;}
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar{width:4px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:4px;}
+
+    /* ── FILTER CHIPS (Today tab) ── */
+    .filter-row{
+      display:flex;gap:7px;overflow-x:auto;padding:0 14px 10px;
+      scrollbar-width:none;
+    }
+    .filter-row::-webkit-scrollbar{display:none;}
+    .chip{
+      flex-shrink:0;padding:5px 13px;border-radius:20px;
+      border:1px solid var(--border);background:var(--card);
+      color:var(--muted);font-size:11.5px;font-weight:500;cursor:pointer;
+      transition:all .18s;white-space:nowrap;
+      box-shadow:0 1px 3px rgba(0,0,0,.05);
+    }
+    .chip.active{background:rgba(232,93,47,.1);border-color:rgba(232,93,47,.35);color:var(--accent);}
+  </style>
+</head>
+<body>
+
+<!-- QUOTE BANNER -->
+<div class="quote-banner" id="quoteBanner">
+  <span class="quote-icon">✦</span>
+  <div class="quote-text" id="quoteText">Loading your daily inspiration...</div>
+  <div class="quote-author" id="quoteAuthor"></div>
+</div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div>
+    <div class="app-title">UPSC Prep Tracker</div>
+  </div>
+  <div class="header-right">
+    <div class="overall-pct" id="overallPct">0%</div>
+    <div class="overall-lbl">overall</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main-content">
+
+  <!-- TAB: TODAY -->
+  <div id="tab-today" class="tab-content active">
+    <div class="date-nav">
+      <button class="date-nav-btn" id="prevBtn" onclick="navDate(-1)">&#8249;</button>
+      <div class="date-center">
+        <div class="date-main" id="dateDisplay">—</div>
+        <div class="date-day" id="dayDisplay">—</div>
+      </div>
+      <button class="date-nav-btn" id="nextBtn" onclick="navDate(1)">&#8250;</button>
+    </div>
+
+    <div class="day-progress-wrap">
+      <div class="day-progress" id="dayProgressBox">
+        <div class="progress-row">
+          <span class="progress-label">Day Progress</span>
+          <span class="progress-count" id="progressCount">0 / 0</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-row" id="filterRow"></div>
+    <div id="taskContainer"></div>
+  </div>
+
+  <!-- TAB: ALL DAYS -->
+  <div id="tab-calendar" class="tab-content">
+    <div style="padding:14px 16px 4px;">
+      <h2 style="font-family:'Playfair Display',serif;font-size:22px;">All Dates</h2>
+      <p style="font-size:12.5px;color:var(--muted);margin-top:3px;">Tap a date to expand · tap tasks to complete</p>
+    </div>
+    <div id="calendarContainer"></div>
+  </div>
+
+  <!-- TAB: PENDING -->
+  <div id="tab-pending" class="tab-content">
+    <div class="pending-top">
+      <h2 class="pending-title">Pending Tasks</h2>
+      <p class="pending-sub">All incomplete tasks across the schedule</p>
+      <div class="pending-badge" id="pendingBadge">— tasks pending</div>
+    </div>
+    <div id="pendingContainer"></div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-tab="today" onclick="switchTab('today')">
+    <span class="nav-icon">📅</span>
+    <span>Today</span>
+  </button>
+  <button class="nav-btn" data-tab="calendar" onclick="switchTab('calendar')">
+    <span class="nav-icon">🗓️</span>
+    <span>All Days</span>
+  </button>
+  <button class="nav-btn" data-tab="pending" onclick="switchTab('pending')">
+    <span class="nav-icon">⏳</span>
+    <span>Pending</span>
+    <span class="nav-badge" id="pendingNavBadge"></span>
+  </button>
+</nav>
+
+<script>
+// ================================================================
+// MOTIVATIONAL QUOTES (60 UPSC-themed, non-repeating across loads)
+// ================================================================
+const QUOTES = [
+  {t:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+  {t:"Success is the sum of small efforts, repeated day in and day out.",a:"Robert Collier"},
+  {t:"Discipline is the bridge between goals and accomplishment.",a:"Jim Rohn"},
+  {t:"The UPSC exam is not just a test of knowledge — it is a test of character.",a:"Unknown"},
+  {t:"Don't watch the clock; do what it does. Keep going.",a:"Sam Levenson"},
+  {t:"Push yourself, because no one else is going to do it for you.",a:"Unknown"},
+  {t:"Great things never come from comfort zones.",a:"Unknown"},
+  {t:"The future belongs to those who believe in the beauty of their dreams.",a:"Eleanor Roosevelt"},
+  {t:"It's not about having time. It's about making time.",a:"Unknown"},
+  {t:"The difference between ordinary and extraordinary is that little extra.",a:"Jimmy Johnson"},
+  {t:"Success doesn't come from what you do occasionally. It comes from what you do consistently.",a:"Marie Forleo"},
+  {t:"Every expert was once a beginner. Every pro was once an amateur.",a:"Unknown"},
+  {t:"Motivation gets you going but discipline keeps you growing.",a:"John C. Maxwell"},
+  {t:"You don't have to be great to start, but you have to start to be great.",a:"Zig Ziglar"},
+  {t:"Believe you can and you're halfway there.",a:"Theodore Roosevelt"},
+  {t:"It always seems impossible until it's done.",a:"Nelson Mandela"},
+  {t:"Don't stop when you're tired. Stop when you're done.",a:"Unknown"},
+  {t:"Hard work beats talent when talent doesn't work hard.",a:"Tim Notke"},
+  {t:"In the middle of difficulty lies opportunity.",a:"Albert Einstein"},
+  {t:"Strive for progress, not perfection.",a:"Unknown"},
+  {t:"A journey of a thousand miles begins with a single step.",a:"Lao Tzu"},
+  {t:"The mind is everything. What you think, you become.",a:"Buddha"},
+  {t:"Quality is not an act; it is a habit.",a:"Aristotle"},
+  {t:"Study not to know more, but to be more.",a:"Unknown"},
+  {t:"The IAS officer you want to become starts with the student you are today.",a:"Unknown"},
+  {t:"Your sacrifice today is your strength tomorrow.",a:"Unknown"},
+  {t:"Every page you study today is a step closer to your dream.",a:"Unknown"},
+  {t:"Stay patient and trust your journey.",a:"Unknown"},
+  {t:"Knowledge is power, but applied knowledge is superpower.",a:"Unknown"},
+  {t:"When you feel like quitting, think about why you started.",a:"Unknown"},
+  {t:"The price of excellence is discipline. The cost of mediocrity is disappointment.",a:"William Arthur Ward"},
+  {t:"Prepare yourself in silence, then let your results make the noise.",a:"Unknown"},
+  {t:"Focus on your goal, not your fear.",a:"Unknown"},
+  {t:"The best investment you can make is in yourself.",a:"Warren Buffett"},
+  {t:"Small daily improvements over time lead to stunning results.",a:"Robin Sharma"},
+  {t:"Aspirants are made in silence, not in applause.",a:"Unknown"},
+  {t:"The syllabus doesn't defeat you — giving up does.",a:"Unknown"},
+  {t:"This is not just an exam. This is your calling.",a:"Unknown"},
+  {t:"UPSC is a marathon. Train your mind like a marathon runner.",a:"Unknown"},
+  {t:"Your dedication today will inspire others tomorrow.",a:"Unknown"},
+  {t:"The nation needs officers who think critically and act decisively.",a:"Unknown"},
+  {t:"An officer is shaped in the library before the examination hall.",a:"Unknown"},
+  {t:"Work hard in silence; let your results be your noise.",a:"Frank Ocean"},
+  {t:"Revise what you learnt; review what you did; refocus on what matters.",a:"Unknown"},
+  {t:"Rise above the storm and you will find the sunshine.",a:"Mario Fernandez"},
+  {t:"Winners embrace hard work. They love the discipline of it.",a:"Lou Holtz"},
+  {t:"Each day is a new chance to get closer to your dream posting.",a:"Unknown"},
+  {t:"Sharpen your preparation, and the exam will sharpen itself for you.",a:"Unknown"},
+  {t:"Excellence is not a destination but a continuous journey that never ends.",a:"Brian Tracy"},
+  {t:"Every hour of preparation you put in today reduces uncertainty tomorrow.",a:"Unknown"},
+  {t:"The one who studies when others rest will succeed when others wonder why.",a:"Unknown"},
+  {t:"Make today's effort impossible to ignore.",a:"Unknown"},
+  {t:"Your consistency is your most powerful weapon.",a:"Unknown"},
+  {t:"Reading one more chapter today means one less regret tomorrow.",a:"Unknown"},
+  {t:"Courage is not the absence of fear; it is doing the work in spite of it.",a:"Unknown"},
+  {t:"Be so prepared that nothing surprises you in the exam hall.",a:"Unknown"},
+  {t:"The roots of education are bitter, but the fruit is sweet.",a:"Aristotle"},
+  {t:"You are only one decision away from a totally different result.",a:"Unknown"},
+  {t:"Dream with your eyes open and work with your eyes sharper.",a:"Unknown"},
+  {t:"Let your dedication be so fierce that doubt forgets your address.",a:"Unknown"},
+];
+
+function getNextQuote(){
+  let order=JSON.parse(localStorage.getItem('q_order')||'null');
+  let idx=parseInt(localStorage.getItem('q_idx')||'0');
+  if(!order||idx>=order.length){
+    order=[...Array(QUOTES.length).keys()];
+    for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+    idx=0;
+    localStorage.setItem('q_order',JSON.stringify(order));
+  }
+  const q=QUOTES[order[idx]];
+  localStorage.setItem('q_idx',idx+1);
+  return q;
+}
+
+// ================================================================
+// CATEGORIES
+// ================================================================
+const CATS={
+  math:{label:'Quantitative Aptitude',color:'#4DD0E1'},
+  geo:{label:'Physical Geography',color:'#42A5F5'},
+  polity:{label:'Indian Polity',color:'#FF7043'},
+  env:{label:'Ecology & Environment',color:'#66BB6A'},
+  sci:{label:'Science & Technology',color:'#BA68C8'},
+  eco:{label:'Indian Economy',color:'#FFA726'},
+  hist:{label:'History & Culture',color:'#EF5350'},
+  igeo:{label:'Indian Geography',color:'#26C6DA'},
+  ca:{label:'Current Affairs',color:'#EC407A'},
+  daily:{label:'Daily Task',color:'#90A4AE'},
+  pts:{label:'Practice Tests',color:'#7E57C2'},
+};
+
+// ================================================================
+// SCHEDULE DATA — ALL TASKS FROM DOCUMENT
+// ================================================================
+const SCHEDULE=[
+  {date:'2026-03-08',tasks:[
+    {id:'d0308_0',t:'Precise -- 9',c:'daily'},
+  ]},
+  {date:'2026-03-09',tasks:[
+    {id:'d0309_0',t:'Basic 1: Addition and Subtraction',c:'math'},
+    {id:'d0309_1',t:'Basic 2: Multiplication and Division',c:'math'},
+    {id:'d0309_2',t:'Basic 3: Fractions Basics, Operations',c:'math'},
+    {id:'d0309_3',t:'Basic 4: Algebra — Variables and Linear Equation in 1 Variable',c:'math'},
+    {id:'d0309_4',t:'Number System: Basics of Division, Multiplication and Power',c:'math'},
+    {id:'d0309_5',t:'Number System: Place Value',c:'math'},
+    {id:'d0309_6',t:'Number System: Sum of Natural Numbers',c:'math'},
+    {id:'d0309_7',t:'Precise -- 9',c:'daily'},
+  ]},
+  {date:'2026-03-10',tasks:[
+    {id:'d0310_0',t:'Number System: Sum of Digits',c:'math'},
+    {id:'d0310_1',t:'Number System: Types of Numbers',c:'math'},
+    {id:'d0310_2',t:'Number System: Factors',c:'math'},
+    {id:'d0310_3',t:'Number System: Even and Odd',c:'math'},
+    {id:'d0310_4',t:'Number System: Multiples',c:'math'},
+    {id:'d0310_5',t:'Number System: Divisibility Rules',c:'math'},
+    {id:'d0310_6',t:'Number System: Prime Numbers and Factorisation',c:'math'},
+    {id:'d0310_7',t:'Precise -- 9',c:'daily'},
+  ]},
+  {date:'2026-03-11',tasks:[
+    {id:'d0311_0',t:'Number System: Number of Factors',c:'math'},
+    {id:'d0311_1',t:'Number System: Sum of Factors',c:'math'},
+    {id:'d0311_2',t:'Number System: Trailing Zeros',c:'math'},
+    {id:'d0311_3',t:'Remainder Theorem: Periodicity',c:'math'},
+    {id:'d0311_4',t:'Remainder Theorem: Remainder Theorem',c:'math'},
+    {id:'d0311_5',t:'Remainder Theorem: Unit Digit / Last Digit',c:'math'},
+    {id:'d0311_6',t:'Remainder Theorem: BODMAS',c:'math'},
+    {id:'d0311_7',t:'Remainder Theorem: Decimal Numbers and Conversions',c:'math'},
+    {id:'d0311_8',t:'HCF / GCD',c:'math'},
+    {id:'d0311_9',t:'LCM',c:'math'},
+    {id:'d0311_10',t:'Application of HCF and LCM',c:'math'},
+    {id:'d0311_11',t:'Linear Equations in Two Variables',c:'math'},
+    {id:'d0311_12',t:'Number of Solutions',c:'math'},
+    {id:'d0311_13',t:'Substitution Method',c:'math'},
+    {id:'d0311_14',t:'Precise -- 9',c:'daily'},
+  ]},
+  {date:'2026-03-12',tasks:[
+    {id:'d0312_0',t:'Current Affairs',c:'ca'},
+    {id:'d0312_1',t:'Precise -- 9',c:'daily'},
+  ]},
+  {date:'2026-03-13',tasks:[
+    {id:'d0313_0',t:'Elimination Method',c:'math'},
+    {id:'d0313_1',t:'Age Problems',c:'math'},
+    {id:'d0313_2',t:'Quadratic Equation in 1 Variable',c:'math'},
+    {id:'d0313_3',t:'Quadratic Formula',c:'math'},
+    {id:'d0313_4',t:'Identity Method',c:'math'},
+    {id:'d0313_5',t:'Splitting the Middle Term',c:'math'},
+    {id:'d0313_6',t:'Binomial Expansion (Basics)',c:'math'},
+    {id:'d0313_7',t:'Precise -- 9',c:'daily'},
+  ]},
+  {date:'2026-03-14',tasks:[
+    {id:'d0314_0',t:'Solving Equations using Factorisation',c:'math'},
+    {id:'d0314_1',t:'Operations on Fractions',c:'math'},
+    {id:'d0314_2',t:'Infinite Fractions',c:'math'},
+    {id:'d0314_3',t:'Fractions Word Problems',c:'math'},
+    {id:'d0314_4',t:'Value Changing of Fractions',c:'math'},
+    {id:'d0314_5',t:'Terminating and Non-Terminating Fractions',c:'math'},
+    {id:'d0314_6',t:'Conversion to P/Q Form',c:'math'},
+    {id:'d0314_7',t:'Precise -- 9',c:'daily'},
+  ]},
+  {date:'2026-03-15',tasks:[
+    {id:'d0315_0',t:'Rounding of Numbers',c:'math'},
+    {id:'d0315_1',t:'Maximum and Minimum Ratios',c:'math'},
+    {id:'d0315_2',t:'HCF and LCM of Fractions',c:'math'},
+    {id:'d0315_3',t:'PYQ on Fractions',c:'math'},
+    {id:'d0315_4',t:'Intro to Exponents',c:'math'},
+    {id:'d0315_5',t:'Exponent Identities',c:'math'},
+    {id:'d0315_6',t:'Squares',c:'math'},
+    {id:'d0315_7',t:'Precise -- 9',c:'daily'},
+  ]},
+  {date:'2026-03-16',tasks:[
+    {id:'d0316_0',t:'Cubes',c:'math'},
+    {id:'d0316_1',t:'Order of Magnitude',c:'math'},
+    {id:'d0316_2',t:'Comparison',c:'math'},
+    {id:'d0316_3',t:'Square Roots',c:'math'},
+    {id:'d0316_4',t:'Cube Roots',c:'math'},
+    {id:'d0316_5',t:'Surds',c:'math'},
+    {id:'d0316_6',t:'Ratios Basics',c:'math'},
+    {id:'d0316_7',t:'Precise -- 9',c:'daily'},
+    {id:'d0316_8',t:'Physical Geography: The Universe & Solar System',c:'geo'},
+    {id:'d0316_9',t:'Physical Geography: The Origin & Evolution of Earth',c:'geo'},
+    {id:'d0316_10',t:'Physical Geography: Interior of the Earth',c:'geo'},
+    {id:'d0316_11',t:'Physical Geography: Biogeography — Natural Vegetation, Biomes',c:'geo'},
+    {id:'d0316_12',t:'Physical Geography: World Mapping',c:'geo'},
+  ]},
+  {date:'2026-03-17',tasks:[
+    {id:'d0317_0',t:'Direct and Inverse Proportionality',c:'math'},
+    {id:'d0317_1',t:'Simple Partnership',c:'math'},
+    {id:'d0317_2',t:'Compound Partnership',c:'math'},
+    {id:'d0317_3',t:'Mixtures',c:'math'},
+    {id:'d0317_4',t:'Averages Basics',c:'math'},
+    {id:'d0317_5',t:'Different Types of Problems (Averages)',c:'math'},
+    {id:'d0317_6',t:'Averages PYQs',c:'math'},
+    {id:'d0317_7',t:'Precise -- 9',c:'daily'},
+    {id:'d0317_8',t:'Physical Geography: Geomorphology — Plate Tectonics, Continents, Endogenic (Earthquake, Volcanism etc.) and Exogenic (Weathering, Mass Movement) movements, Landform & their Evolution, Minerals & Rocks, Soil',c:'geo'},
+  ]},
+  {date:'2026-03-18',tasks:[
+    {id:'d0318_0',t:'Time and Work Basics',c:'math'},
+    {id:'d0318_1',t:'Formula Approach',c:'math'},
+    {id:'d0318_2',t:'Efficiency Method',c:'math'},
+    {id:'d0318_3',t:'Individual Works',c:'math'},
+    {id:'d0318_4',t:'Pipes and Cisterns Basics',c:'math'},
+    {id:'d0318_5',t:'Leakages and Negative Work',c:'math'},
+    {id:'d0318_6',t:'Capacity of Tanks',c:'math'},
+    {id:'d0318_7',t:'Precise -- 9',c:'daily'},
+    {id:'d0318_8',t:'Physical Geography: Climatology — Composition & Structure of Atmosphere, Solar Radiation & Heat Balance, Wind systems, Condensation, Precipitation, World Climate',c:'geo'},
+  ]},
+  {date:'2026-03-19',tasks:[
+    {id:'d0319_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0319_1',t:'Physical Geography: Oceanography — Ocean relief, Temperature, Salinity, Density, Waves, Tides, Ocean Currents, Ocean Resources',c:'geo'},
+    {id:'d0319_2',t:'Physical Geography: Fundamentals of Human and Economic Geography',c:'geo'},
+    {id:'d0319_3',t:'Current Affairs',c:'ca'},
+    {id:'d0319_4',t:'Set Theory Basics',c:'math'},
+    {id:'d0319_5',t:'Venn Diagrams',c:'math'},
+    {id:'d0319_6',t:'2 Circle Problems',c:'math'},
+    {id:'d0319_7',t:'3 Circle Problems',c:'math'},
+    {id:'d0319_8',t:'Syllogisms Basics',c:'math'},
+    {id:'d0319_9',t:'Syllogisms Questions',c:'math'},
+    {id:'d0319_10',t:'Percentages Basics',c:'math'},
+  ]},
+  {date:'2026-03-20',tasks:[
+    {id:'d0320_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0320_1',t:'IR',c:'daily'},
+    {id:'d0320_2',t:'Budget and Economic Survey',c:'eco'},
+    {id:'d0320_3',t:'Percent of Percent',c:'math'},
+    {id:'d0320_4',t:'Percent Change',c:'math'},
+    {id:'d0320_5',t:'Price and Consumption',c:'math'},
+    {id:'d0320_6',t:'Net Effect',c:'math'},
+    {id:'d0320_7',t:'Interest Basics',c:'math'},
+    {id:'d0320_8',t:'Simple Interest',c:'math'},
+    {id:'d0320_9',t:'Compound Interest',c:'math'},
+  ]},
+  {date:'2026-03-21',tasks:[
+    {id:'d0321_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0321_1',t:'IR',c:'daily'},
+    {id:'d0321_2',t:'Budget and Economic Survey',c:'eco'},
+    {id:'d0321_3',t:'Profit & Loss Basics',c:'math'},
+    {id:'d0321_4',t:'Discount Problems',c:'math'},
+    {id:'d0321_5',t:'Wrong Weight Problems',c:'math'},
+    {id:'d0321_6',t:'AP Basics — nth term and sums',c:'math'},
+    {id:'d0321_7',t:'General Sums (AP)',c:'math'},
+    {id:'d0321_8',t:'GP Definition',c:'math'},
+    {id:'d0321_9',t:'HP Definition',c:'math'},
+  ]},
+  {date:'2026-03-22',tasks:[
+    {id:'d0322_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0322_1',t:'CT',c:'daily'},
+    {id:'d0322_2',t:'Alphabet Basic Numbering',c:'math'},
+    {id:'d0322_3',t:'Alphabet Series',c:'math'},
+    {id:'d0322_4',t:'Coding Decoding',c:'math'},
+    {id:'d0322_5',t:'Number Series Basic Approach',c:'math'},
+    {id:'d0322_6',t:'Number Series Questions',c:'math'},
+    {id:'d0322_7',t:'Blood Relations Basics',c:'math'},
+    {id:'d0322_8',t:'Family Tree',c:'math'},
+  ]},
+  {date:'2026-03-23',tasks:[
+    {id:'d0323_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0323_1',t:'Indian Polity: Union Executive — President, Vice President',c:'polity'},
+    {id:'d0323_2',t:'Indian Polity: Centre-State Relations',c:'polity'},
+    {id:'d0323_3',t:'Coded Relations',c:'math'},
+    {id:'d0323_4',t:'Clock Basics',c:'math'},
+    {id:'d0323_5',t:'Angle Formula',c:'math'},
+    {id:'d0323_6',t:'Coincidence & Opposites',c:'math'},
+    {id:'d0323_7',t:'Gaining or Losing Time',c:'math'},
+    {id:'d0323_8',t:'Calendar Basics — Division by 7 Rule',c:'math'},
+    {id:'d0323_9',t:'Similar Calendars',c:'math'},
+  ]},
+  {date:'2026-03-24',tasks:[
+    {id:'d0324_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0324_1',t:'Indian Polity: Union Executive — Prime Minister, Council of Ministers',c:'polity'},
+    {id:'d0324_2',t:'Indian Polity: Parliament',c:'polity'},
+    {id:'d0324_3',t:'Indian Polity: Local Government',c:'polity'},
+    {id:'d0324_4',t:'Leap Years',c:'math'},
+    {id:'d0324_5',t:'Calendar PYQs',c:'math'},
+    {id:'d0324_6',t:'Factorials',c:'math'},
+    {id:'d0324_7',t:'Principles of Counting',c:'math'},
+    {id:'d0324_8',t:'Letter Rearrangements',c:'math'},
+    {id:'d0324_9',t:'Circular Arrangements',c:'math'},
+    {id:'d0324_10',t:'Combination Formula nCr',c:'math'},
+  ]},
+  {date:'2026-03-25',tasks:[
+    {id:'d0325_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0325_1',t:'Indian Polity: State Executive',c:'polity'},
+    {id:'d0325_2',t:'Indian Polity: Citizenship',c:'polity'},
+    {id:'d0325_3',t:'Group Formations',c:'math'},
+    {id:'d0325_4',t:'Applications in Binomial Theorem',c:'math'},
+    {id:'d0325_5',t:'Applications in Geometry',c:'math'},
+    {id:'d0325_6',t:'P & C Miscellaneous',c:'math'},
+    {id:'d0325_7',t:'Probability Definition',c:'math'},
+    {id:'d0325_8',t:'Coin Tossing',c:'math'},
+    {id:'d0325_9',t:'Dice Rolling',c:'math'},
+  ]},
+  {date:'2026-03-26',tasks:[
+    {id:'d0326_0',t:'Current Affairs',c:'ca'},
+    {id:'d0326_1',t:'Precise -- 9',c:'daily'},
+    {id:'d0326_2',t:'Indian Polity: Judiciary',c:'polity'},
+    {id:'d0326_3',t:'Indian Polity: Anti-Defection Laws',c:'polity'},
+    {id:'d0326_4',t:'Playing Cards',c:'math'},
+    {id:'d0326_5',t:'Use of P&C',c:'math'},
+    {id:'d0326_6',t:'Applications in Geometry',c:'math'},
+    {id:'d0326_7',t:'Units and Conversions',c:'math'},
+    {id:'d0326_8',t:'Distance and Time',c:'math'},
+    {id:'d0326_9',t:'Basics of Speed',c:'math'},
+    {id:'d0326_10',t:'KMpH to MpS Conversions',c:'math'},
+  ]},
+  {date:'2026-03-27',tasks:[
+    {id:'d0327_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0327_1',t:'Indian Polity',c:'polity'},
+    {id:'d0327_2',t:'Relative Speed',c:'math'},
+    {id:'d0327_3',t:'Train Problems',c:'math'},
+    {id:'d0327_4',t:'Boat Problems',c:'math'},
+    {id:'d0327_5',t:'2D Basics',c:'math'},
+    {id:'d0327_6',t:'Types of Angles',c:'math'},
+    {id:'d0327_7',t:'Types of Lines',c:'math'},
+    {id:'d0327_8',t:'Types of Triangles',c:'math'},
+  ]},
+  {date:'2026-03-28',tasks:[
+    {id:'d0328_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0328_1',t:'Indian Polity',c:'polity'},
+    {id:'d0328_2',t:'Pythagoras Theorem',c:'math'},
+    {id:'d0328_3',t:'Directions',c:'math'},
+    {id:'d0328_4',t:'Quadrilaterals',c:'math'},
+    {id:'d0328_5',t:'Areas of Figures',c:'math'},
+    {id:'d0328_6',t:'Regular Polygons',c:'math'},
+    {id:'d0328_7',t:'Area of Regular Hexagon',c:'math'},
+    {id:'d0328_8',t:'Sum of Interior Angles',c:'math'},
+  ]},
+  {date:'2026-03-29',tasks:[
+    {id:'d0329_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0329_1',t:'CT',c:'daily'},
+    {id:'d0329_2',t:'Number of Diagonals',c:'math'},
+    {id:'d0329_3',t:'3D Basics',c:'math'},
+    {id:'d0329_4',t:'Volumes, TSA and CSA',c:'math'},
+    {id:'d0329_5',t:'Cubes',c:'math'},
+    {id:'d0329_6',t:'Cuboids',c:'math'},
+    {id:'d0329_7',t:'Cylinder',c:'math'},
+    {id:'d0329_8',t:'Cones',c:'math'},
+  ]},
+  {date:'2026-03-30',tasks:[
+    {id:'d0330_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0330_1',t:'Indian Polity: Making of the Constitution',c:'polity'},
+    {id:'d0330_2',t:'Indian Polity: Philosophy of the Constitution',c:'polity'},
+    {id:'d0330_3',t:'Indian Polity: Salient Features of the Constitution',c:'polity'},
+    {id:'d0330_4',t:'Indian Polity: The Preamble',c:'polity'},
+    {id:'d0330_5',t:'Indian Polity: Basic Structure of the Constitution',c:'polity'},
+    {id:'d0330_6',t:'Indian Polity: Amendment of the Constitution',c:'polity'},
+    {id:'d0330_7',t:'Spheres',c:'math'},
+    {id:'d0330_8',t:'Hemispheres',c:'math'},
+    {id:'d0330_9',t:'Concept of Density',c:'math'},
+    {id:'d0330_10',t:'Meter Cube to Litre Conversion',c:'math'},
+    {id:'d0330_11',t:'Cubes',c:'math'},
+    {id:'d0330_12',t:'Dices',c:'math'},
+    {id:'d0330_13',t:'DI Tables',c:'math'},
+  ]},
+  {date:'2026-03-31',tasks:[
+    {id:'d0331_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0331_1',t:'Indian Polity: The Union and its Territory',c:'polity'},
+    {id:'d0331_2',t:'Indian Polity: Emergency Provisions',c:'polity'},
+    {id:'d0331_3',t:'Pie Chart',c:'math'},
+    {id:'d0331_4',t:'Bar Chart',c:'math'},
+    {id:'d0331_5',t:'Line Chart',c:'math'},
+    {id:'d0331_6',t:'Other Charts',c:'math'},
+  ]},
+  {date:'2026-04-01',tasks:[
+    {id:'d0401_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0401_1',t:'Indian Polity: Fundamental Rights',c:'polity'},
+    {id:'d0401_2',t:'Indian Polity: Presidential and Parliamentary System',c:'polity'},
+    {id:'d0401_3',t:'Indian Polity: Nature of Indian Federal System',c:'polity'},
+  ]},
+  {date:'2026-04-02',tasks:[
+    {id:'d0402_0',t:'Current Affairs',c:'ca'},
+    {id:'d0402_1',t:'Precise -- 9',c:'daily'},
+    {id:'d0402_2',t:'Indian Polity: DPSP',c:'polity'},
+    {id:'d0402_3',t:'Indian Polity: Fundamental Duties',c:'polity'},
+    {id:'d0402_4',t:'Indian Polity: Constitutional and Non-Constitutional Bodies',c:'polity'},
+    {id:'d0402_5',t:'Indian Polity: Attorney General',c:'polity'},
+  ]},
+  {date:'2026-04-03',tasks:[
+    {id:'d0403_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0403_1',t:'Ecology & Environment: Origin of Life and Classification',c:'env'},
+    {id:'d0403_2',t:'Ecology & Environment: Ecology and Ecosystem — Basic Concepts & Components',c:'env'},
+    {id:'d0403_3',t:'Ecology & Environment: Niche, Biomes, Ecotones, Ecological Succession',c:'env'},
+    {id:'d0403_4',t:'Ecology & Environment: Keystone Species, Indicator Species, Invasive Species etc.',c:'env'},
+    {id:'d0403_5',t:'Ecology & Environment: Major Types of Ecosystems',c:'env'},
+  ]},
+  {date:'2026-04-04',tasks:[
+    {id:'d0404_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0404_1',t:'Ecology & Environment: Environmental Pollution — Air, Water, Soil, Noise, Radioactive, E-waste, Solid Waste etc.',c:'env'},
+    {id:'d0404_2',t:'Ecology & Environment: Environmental Issues — Global Warming, Climate Change Impacts, Ozone Depletion, Eutrophication, Acidification etc.',c:'env'},
+    {id:'d0404_3',t:'Ecology & Environment: New Technologies, Renewable Energy, Climate Engineering, Bioremediation etc.',c:'env'},
+  ]},
+  {date:'2026-04-05',tasks:[
+    {id:'d0405_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0405_1',t:'Ecology & Environment: Sustainable Development',c:'env'},
+    {id:'d0405_2',t:'Ecology & Environment: Biodiversity — Flora & Fauna (India & The World in news)',c:'env'},
+    {id:'d0405_3',t:'Ecology & Environment: Major Protected Areas in India with Flora and Fauna',c:'env'},
+    {id:'d0405_4',t:'Ecology & Environment: Conservation Efforts and Mitigation Strategy — India & The World',c:'env'},
+    {id:'d0405_5',t:'Ecology & Environment: Climate Change Organizations',c:'env'},
+    {id:'d0405_6',t:'Ecology & Environment: Conventions, Acts and Policies',c:'env'},
+    {id:'d0405_7',t:'Ecology & Environment: Environmental Impact Assessment',c:'env'},
+    {id:'d0405_8',t:'Ecology & Environment: Agroecology — Hydroponics, Aeroponics, Organic and Natural Farming Systems, Precision Agriculture etc.',c:'env'},
+  ]},
+  {date:'2026-04-06',tasks:[
+    {id:'d0406_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0406_1',t:'Early Modern India — Notebook + PDF',c:'hist'},
+  ]},
+  {date:'2026-04-07',tasks:[
+    {id:'d0407_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0407_1',t:'Study Modern India — 66 Pages',c:'hist'},
+  ]},
+  {date:'2026-04-08',tasks:[
+    {id:'d0408_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0408_1',t:'Science & Technology: Space Science and Technology',c:'sci'},
+  ]},
+  {date:'2026-04-09',tasks:[
+    {id:'d0409_0',t:'Current Affairs',c:'ca'},
+    {id:'d0409_1',t:'Precise -- 9',c:'daily'},
+    {id:'d0409_2',t:'Science & Technology: Innovations and Emerging Technologies',c:'sci'},
+    {id:'d0409_3',t:'Science & Technology: Nuclear Technology',c:'sci'},
+    {id:'d0409_4',t:'Science & Technology: Information and Communication Technology (ICT)',c:'sci'},
+  ]},
+  {date:'2026-04-10',tasks:[
+    {id:'d0410_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0410_1',t:'Science & Technology: Defence Technology',c:'sci'},
+    {id:'d0410_2',t:'Science & Technology: Biotechnology and its Applications',c:'sci'},
+    {id:'d0410_3',t:'Science & Technology: Basic Sciences (Conceptual Foundations)',c:'sci'},
+  ]},
+  {date:'2026-04-11',tasks:[
+    {id:'d0411_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0411_1',t:'Study Medieval India for Exam — 100 Pages',c:'hist'},
+  ]},
+  {date:'2026-04-12',tasks:[
+    {id:'d0412_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0412_1',t:'CT',c:'daily'},
+  ]},
+  {date:'2026-04-13',tasks:[
+    {id:'d0413_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0413_1',t:'Indian Economy: A Brief Background of the Indian Economy',c:'eco'},
+    {id:'d0413_2',t:'Indian Economy: Basic Concepts — Demand, Supply, Equilibrium, Price Mechanism',c:'eco'},
+    {id:'d0413_3',t:'Indian Economy: Types of Economies — Market, Centrally Planned, Mixed and Sectors of Economy',c:'eco'},
+  ]},
+  {date:'2026-04-14',tasks:[
+    {id:'d0414_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0414_1',t:'Indian Economy: National Income',c:'eco'},
+    {id:'d0414_2',t:'Indian Economy: National Income Concepts — GDP, GNP, Purchasing Power Parity, GDP Deflator, Current/Constant Prices, GVA at Basic Prices etc.',c:'eco'},
+    {id:'d0414_3',t:'Indian Economy: Factors Affecting National Income',c:'eco'},
+    {id:'d0414_4',t:'Indian Economy: Personal and Disposable Income',c:'eco'},
+  ]},
+  {date:'2026-04-15',tasks:[
+    {id:'d0415_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0415_1',t:'IR',c:'daily'},
+  ]},
+  {date:'2026-04-16',tasks:[
+    {id:'d0416_0',t:'Current Affairs',c:'ca'},
+    {id:'d0416_1',t:'Precise -- 9',c:'daily'},
+    {id:'d0416_2',t:'Indian Economy: Money Supply, the RBI and Inflation',c:'eco'},
+    {id:'d0416_3',t:'Indian Economy: Concepts — Fiat Money, Legal Tender, High Powered Money, Liquidity, Money Supply (M0–M3), Money Multiplier etc.',c:'eco'},
+    {id:'d0416_4',t:'Indian Economy: Functions of the RBI, Monetary Policy Committee, Government Securities, Ways & Means Advances etc.',c:'eco'},
+    {id:'d0416_5',t:'Indian Economy: Monetary Policy Instruments — Repo, SDF, OMO, Sterilisation etc. & Monetary Transmission',c:'eco'},
+    {id:'d0416_6',t:'Indian Economy: Concepts of Inflation — CPI, WPI, Headline, Core, Reflation, Stagflation, Shrinkflation etc.',c:'eco'},
+    {id:'d0416_7',t:'Indian Economy: Inflation — Causes and Management',c:'eco'},
+    {id:'d0416_8',t:'Indian Economy: Recent RBI Policy Actions and Repo Rate Trends',c:'eco'},
+  ]},
+  {date:'2026-04-17',tasks:[
+    {id:'d0417_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0417_1',t:'Indian Economy: The Banking Sector',c:'eco'},
+    {id:'d0417_2',t:'Indian Economy: Banking Basics — Assets, Liabilities, Priority Sector Lending',c:'eco'},
+    {id:'d0417_3',t:'Indian Economy: Types of Banks — Commercial, Cooperative, Regional Rural Banks, Neo-banks etc.',c:'eco'},
+    {id:'d0417_4',t:'Indian Economy: Banking Crises — Twin Balance Sheet Problem, Recapitalisation, IBC, NBFC Crises etc.',c:'eco'},
+    {id:'d0417_5',t:'Indian Economy: Basel Norms, Provision Coverage Ratio, Interest Coverage Ratio',c:'eco'},
+  ]},
+  {date:'2026-04-18',tasks:[
+    {id:'d0418_0',t:'Precise -- 9',c:'daily'},
+    {id:'d0418_1',t:'IR',c:'daily'},
+  ]},
+  {date:'2026-04-19',tasks:[
+    {id:'d0419_0',t:'CT',c:'daily'},
+  ]},
+  {date:'2026-04-20',tasks:[
+    {id:'d0420_0',t:'Economy: Public Finance',c:'eco'},
+    {id:'d0420_1',t:'Economy: Budget — Revenue & Capital Accounts, Deficits, FRBM, Debt Management',c:'eco'},
+    {id:'d0420_2',t:'Economy: Finance Commission, Post-COVID Fiscal Measures',c:'eco'},
+    {id:'d0420_3',t:'Economy: Taxation — Direct & Indirect Taxes, GST, BEPS, Global Minimum Tax',c:'eco'},
+    {id:'d0420_4',t:'Economy: Government Schemes Linked to Fiscal Management',c:'eco'},
+  ]},
+  {date:'2026-04-21',tasks:[
+    {id:'d0421_0',t:'Economy: Money and Capital Markets',c:'eco'},
+    {id:'d0421_1',t:'Economy: Money Market Instruments — Commercial Papers (CPs), Certificates of Deposit (CDs), Participation Certificates etc.',c:'eco'},
+    {id:'d0421_2',t:'Economy: Capital Market Instruments — Equity, Debt, ETFs',c:'eco'},
+    {id:'d0421_3',t:'Economy: International Economics',c:'eco'},
+    {id:'d0421_4',t:'Economy: Balance of Payments — Current & Capital Accounts, Financing Deficits',c:'eco'},
+    {id:'d0421_5',t:'Economy: Exchange Rates, FDI, FPI, Trade Policies, International Trade Agreements',c:'eco'},
+    {id:'d0421_6',t:'Economy: Key International Organisations — WTO, IMF, World Bank, UNCTAD',c:'eco'},
+    {id:'d0421_7',t:'Economy: India\'s Global Rankings — Ease of Doing Business, Global Innovation Index, Human Development Index etc.',c:'eco'},
+  ]},
+  {date:'2026-04-22',tasks:[
+    {id:'d0422_0',t:'Ancient India, Art & Culture: Pre-Historic Periods',c:'hist'},
+    {id:'d0422_1',t:'Ancient India, Art & Culture: The Harappan Civilization / Indus Valley Culture — Bronze Age',c:'hist'},
+    {id:'d0422_2',t:'Art & Culture: Architecture of Ancient India from IVC, Cave Architecture, Stupas and Early Temple Traditions, Classical and Folk Dances',c:'hist'},
+  ]},
+  {date:'2026-04-23',tasks:[
+    {id:'d0423_0',t:'Current Affairs',c:'ca'},
+    {id:'d0423_1',t:'Ancient India, Art & Culture: The Vedic Age',c:'hist'},
+    {id:'d0423_2',t:'Ancient India, Art & Culture: Mahajanpadas Era',c:'hist'},
+    {id:'d0423_3',t:'Ancient India, Art & Culture: Iranian and Greek Invasions',c:'hist'},
+    {id:'d0423_4',t:'Ancient India, Art & Culture: The Age of Mauryas',c:'hist'},
+    {id:'d0423_5',t:'Art & Culture: Sculptures of Ancient India including the Ancient Schools of Art, Inscriptions and Pottery; Indian Paintings — Ancient Rock Paintings up to Murals of Ancient Dynasties; Scientific Traditions of Ancient India',c:'hist'},
+  ]},
+  {date:'2026-04-24',tasks:[
+    {id:'d0424_0',t:'Ancient India, Art & Culture: Buddhism, Jainism and Others',c:'hist'},
+    {id:'d0424_1',t:'Ancient India, Art & Culture: Post Mauryas',c:'hist'},
+    {id:'d0424_2',t:'Art & Culture: Ancient Theatre Forms — Puppetry, Drama; Ancient Languages and Literature; Religion and Philosophy',c:'hist'},
+    {id:'d0424_3',t:'Ancient India, Art & Culture: Orthodox and Heterodox Traditions of India',c:'hist'},
+  ]},
+  {date:'2026-04-25',tasks:[
+    {id:'d0425_0',t:'Ancient India, Art & Culture: The Sangam Age',c:'hist'},
+    {id:'d0425_1',t:'Ancient India, Art & Culture: The Gupta Age',c:'hist'},
+    {id:'d0425_2',t:'Ancient India, Art & Culture: The Harsha Age',c:'hist'},
+    {id:'d0425_3',t:'Ancient India, Art & Culture: India\'s Cultural Contacts',c:'hist'},
+    {id:'d0425_4',t:'Ancient India, Art & Culture: Transformation of The Ancient Phase',c:'hist'},
+    {id:'d0425_5',t:'Art & Culture: Indian Music — Vedic and Early Musical Traditions; Important Ancient Sites of Cultural Importance',c:'hist'},
+  ]},
+  {date:'2026-04-26',tasks:[
+    {id:'d0426_0',t:'CT',c:'daily'},
+  ]},
+  {date:'2026-04-27',tasks:[
+    {id:'d0427_0',t:'Physical Geography: The Universe & Solar System',c:'geo'},
+    {id:'d0427_1',t:'Physical Geography: The Origin & Evolution of Earth',c:'geo'},
+    {id:'d0427_2',t:'Physical Geography: Interior of the Earth',c:'geo'},
+    {id:'d0427_3',t:'Physical Geography: Biogeography — Natural Vegetation, Biomes',c:'geo'},
+    {id:'d0427_4',t:'Physical Geography: World Mapping',c:'geo'},
+    {id:'d0427_5',t:'Physical Geography: Geomorphology — Plate Tectonics, Continents, Endogenic (Earthquake, Volcanism etc.) and Exogenic (Weathering, Mass Movement) movements, Landform & their Evolution, Minerals & Rocks, Soil',c:'geo'},
+  ]},
+  {date:'2026-04-28',tasks:[
+    {id:'d0428_0',t:'Physical Geography: Climatology — Composition & Structure of Atmosphere, Solar Radiation & Heat Balance, Wind systems, Condensation, Precipitation, World Climate',c:'geo'},
+    {id:'d0428_1',t:'Physical Geography: Oceanography — Ocean Relief, Temperature, Salinity, Density, Waves, Tides, Ocean Currents, Ocean Resources',c:'geo'},
+    {id:'d0428_2',t:'Physical Geography: Fundamentals of Human and Economic Geography',c:'geo'},
+  ]},
+  {date:'2026-04-29',tasks:[
+    {id:'d0429_0',t:'IR — 07-04-2026',c:'daily'},
+  ]},
+  {date:'2026-04-30',tasks:[
+    {id:'d0430_0',t:'Indian Geography: India Physiography',c:'igeo'},
+    {id:'d0430_1',t:'Indian Geography: Location, Area, and Boundaries',c:'igeo'},
+    {id:'d0430_2',t:'Indian Geography: Physiography — Geological Timelines, Physiographic Division, Drainage Systems',c:'igeo'},
+    {id:'d0430_3',t:'Indian Geography: Climate',c:'igeo'},
+    {id:'d0430_4',t:'Indian Geography: Soil',c:'igeo'},
+    {id:'d0430_5',t:'Indian Geography: Physiography — Drainage Systems',c:'igeo'},
+  ]},
+  {date:'2026-05-01',tasks:[
+    {id:'d0501_0',t:'Indian Geography: Natural Vegetation, Plant and Animal Life',c:'igeo'},
+    {id:'d0501_1',t:'Indian Geography: Natural Hazard & Disasters, Indian Human Geography',c:'igeo'},
+    {id:'d0501_2',t:'Indian Geography: India Mapping',c:'igeo'},
+  ]},
+  {date:'2026-05-02',tasks:[]},
+  {date:'2026-05-03',tasks:[
+    {id:'d0503_0',t:'CT',c:'daily'},
+  ]},
+  {date:'2026-05-04',tasks:[
+    {id:'d0504_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0504_1',t:'CSAT-2025 PTS 01 AND PTS 02',c:'pts'},
+  ]},
+  {date:'2026-05-05',tasks:[
+    {id:'d0505_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0505_1',t:'2024 PTS 03 AND PTS 04',c:'pts'},
+  ]},
+  {date:'2026-05-06',tasks:[
+    {id:'d0506_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0506_1',t:'2023 CSAT-2024 PTS 05 AND PTS 06',c:'pts'},
+  ]},
+  {date:'2026-05-07',tasks:[
+    {id:'d0507_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0507_1',t:'2022 PTS 07 AND PTS 08',c:'pts'},
+  ]},
+  {date:'2026-05-08',tasks:[
+    {id:'d0508_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0508_1',t:'2021 CSAT-2023 PTS 09 AND PTS 10',c:'pts'},
+  ]},
+  {date:'2026-05-09',tasks:[
+    {id:'d0509_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0509_1',t:'2020 PTS 11 AND PTS 12',c:'pts'},
+  ]},
+  {date:'2026-05-10',tasks:[
+    {id:'d0510_0',t:'CT',c:'daily'},
+    {id:'d0510_1',t:'PTS Question Paper and Key',c:'pts'},
+  ]},
+  {date:'2026-05-11',tasks:[
+    {id:'d0511_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0511_1',t:'2019 PTS 13 AND PTS 14',c:'pts'},
+  ]},
+  {date:'2026-05-12',tasks:[
+    {id:'d0512_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0512_1',t:'2018 CSAT-2022 PTS 15 AND PTS 16',c:'pts'},
+  ]},
+  {date:'2026-05-13',tasks:[
+    {id:'d0513_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0513_1',t:'2017 PTS 17 AND PTS 18',c:'pts'},
+  ]},
+  {date:'2026-05-14',tasks:[
+    {id:'d0514_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0514_1',t:'2016 CSAT-2021 PTS 19 AND PTS 20',c:'pts'},
+  ]},
+  {date:'2026-05-15',tasks:[
+    {id:'d0515_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0515_1',t:'2015',c:'pts'},
+  ]},
+  {date:'2026-05-16',tasks:[
+    {id:'d0516_0',t:'PTS Question Paper and Key',c:'pts'},
+    {id:'d0516_1',t:'PYQ from Drishti IAS (as much as possible from whatever sources)',c:'pts'},
+    {id:'d0516_2',t:'Watch CSAT Revision Video (iLearn, Daily Planners)',c:'pts'},
+    {id:'d0516_3',t:'Questions from Fortune App and Fortune Site',c:'pts'},
+  ]},
+  {date:'2026-05-17',tasks:[
+    {id:'d0517_0',t:'CT',c:'daily'},
+  ]},
+  {date:'2026-05-18',tasks:[
+    {id:'d0518_0',t:'PYQ from Drishti IAS (as much as possible from whatever sources)',c:'pts'},
+    {id:'d0518_1',t:'Watch CSAT Revision Video (iLearn, Daily Planners)',c:'pts'},
+    {id:'d0518_2',t:'Questions from Fortune App and Fortune Site',c:'pts'},
+  ]},
+  {date:'2026-05-19',tasks:[
+    {id:'d0519_0',t:'PYQ from Drishti IAS (as much as possible from whatever sources)',c:'pts'},
+    {id:'d0519_1',t:'Watch CSAT Revision Video (iLearn, Daily Planners)',c:'pts'},
+    {id:'d0519_2',t:'Questions from Fortune App and Fortune Site',c:'pts'},
+  ]},
+  {date:'2026-05-20',tasks:[
+    {id:'d0520_0',t:'PYQ from Drishti IAS (as much as possible from whatever sources)',c:'pts'},
+    {id:'d0520_1',t:'Watch CSAT Revision Video (iLearn, Daily Planners)',c:'pts'},
+    {id:'d0520_2',t:'Questions from Fortune App and Fortune Site',c:'pts'},
+  ]},
+  {date:'2026-05-21',tasks:[
+    {id:'d0521_0',t:'PYQ from Drishti IAS (as much as possible from whatever sources)',c:'pts'},
+    {id:'d0521_1',t:'Watch CSAT Revision Video (iLearn, Daily Planners)',c:'pts'},
+    {id:'d0521_2',t:'Questions from Fortune App and Fortune Site',c:'pts'},
+  ]},
+];
+
+// ================================================================
+// APP STATE
+// ================================================================
+let currentDateIdx = 0;
+let activeFilter = 'all';
+const TODAY_STR = new Date().toISOString().split('T')[0];
+const DONE_KEY = 'upsc_done_v2';
+
+function loadDone(){
+  try{ return JSON.parse(localStorage.getItem(DONE_KEY)||'{}'); }catch(e){ return {}; }
+}
+function saveDone(done){ localStorage.setItem(DONE_KEY, JSON.stringify(done)); }
+
+function toggleTask(taskId){
+  const done = loadDone();
+  if(done[taskId]) delete done[taskId]; else done[taskId] = 1;
+  saveDone(done);
+  updateAll();
+}
+
+// ================================================================
+// RENDERING HELPERS
+// ================================================================
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function parseDate(s){
+  const[y,m,d]=s.split('-').map(Number);
+  return new Date(y,m-1,d);
+}
+function formatDate(s){
+  const d=parseDate(s);
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+function getDayName(s){
+  return DAYS[parseDate(s).getDay()];
+}
+
+function buildTaskCard(task, extraClass=''){
+  const done=loadDone();
+  const isDone=!!done[task.id];
+  const c=task.c;
+  const col=(CATS[c]||CATS.daily).color;
+  return `<div class="task-card ${isDone?'done':''} bg-${c} ${extraClass}" onclick="toggleTask('${task.id}')" id="tc_${task.id}">
+    <div class="task-cb" style="${isDone?`background:${col};border-color:${col}`:''}" id="cb_${task.id}">
+      <span class="checkmark">✓</span>
+    </div>
+    <div class="task-txt">${task.t}</div>
+  </div>`;
+}
+
+// ================================================================
+// TODAY TAB
+// ================================================================
+function renderToday(){
+  const entry = SCHEDULE[currentDateIdx];
+  const done = loadDone();
+
+  // Date display
+  document.getElementById('dateDisplay').innerHTML =
+    `${formatDate(entry.date)}${entry.date===TODAY_STR?'<span class="today-pill">TODAY</span>':''}`;
+  document.getElementById('dayDisplay').textContent = getDayName(entry.date);
+
+  // Nav buttons
+  document.getElementById('prevBtn').disabled = currentDateIdx <= 0;
+  document.getElementById('nextBtn').disabled = currentDateIdx >= SCHEDULE.length - 1;
+
+  const tasks = entry.tasks;
+
+  // Progress
+  const total = tasks.length;
+  const completed = tasks.filter(t=>done[t.id]).length;
+  document.getElementById('progressCount').textContent = `${completed} / ${total}`;
+  const pct = total > 0 ? Math.round((completed/total)*100) : 0;
+  const fill = document.getElementById('progressFill');
+  fill.style.width = pct+'%';
+  fill.className = 'progress-fill' + (pct===100?' full':'');
+
+  // Filter chips
+  if(tasks.length > 0){
+    const cats = [...new Set(tasks.map(t=>t.c))];
+    let chips = `<div class="chip ${activeFilter==='all'?'active':''}" onclick="setFilter('all')">All</div>`;
+    cats.forEach(c=>{
+      const info = CATS[c]||CATS.daily;
+      chips += `<div class="chip ${activeFilter===c?'active':''}" onclick="setFilter('${c}')" style="${activeFilter===c?'':''}">
+        ${info.label}
+      </div>`;
+    });
+    document.getElementById('filterRow').innerHTML = chips;
+    document.getElementById('filterRow').style.display='flex';
+  } else {
+    document.getElementById('filterRow').style.display='none';
+  }
+
+  // Task container
+  const container = document.getElementById('taskContainer');
+
+  if(tasks.length === 0){
+    container.innerHTML = `<div class="rest-day">
+      <div class="rest-icon">🌙</div>
+      <div class="rest-title">Rest Day</div>
+      <div class="rest-text">No tasks scheduled for today.<br>Take a well-deserved break and recharge!</div>
+    </div>`;
+    return;
+  }
+
+  // Group by category
+  const filtered = activeFilter === 'all' ? tasks : tasks.filter(t=>t.c===activeFilter);
+
+  if(filtered.length === 0){
+    container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);font-size:13.5px;">No tasks for this category today.</div>`;
+    return;
+  }
+
+  // Group tasks by category
+  const grouped = {};
+  filtered.forEach(task=>{
+    if(!grouped[task.c]) grouped[task.c]=[];
+    grouped[task.c].push(task);
+  });
+
+  let html = '';
+  Object.entries(grouped).forEach(([cat, catTasks])=>{
+    const info = CATS[cat]||CATS.daily;
+    html += `<div class="cat-section">
+      <div class="cat-header">
+        <div class="cat-dot" style="background:${info.color}"></div>
+        <div class="cat-name">${info.label}</div>
+      </div>`;
+    catTasks.forEach(task=>{ html += buildTaskCard(task); });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function setFilter(f){
+  activeFilter = f;
+  renderToday();
+}
+
+function navDate(dir){
+  const newIdx = currentDateIdx + dir;
+  if(newIdx >= 0 && newIdx < SCHEDULE.length){
+    currentDateIdx = newIdx;
+    activeFilter = 'all';
+    renderToday();
+    updateHeader();
+  }
+}
+
+// ================================================================
+// CALENDAR TAB
+// ================================================================
+function renderCalendar(){
+  const done = loadDone();
+  const container = document.getElementById('calendarContainer');
+
+  // Group by month
+  const months = {};
+  SCHEDULE.forEach(entry=>{
+    const d = parseDate(entry.date);
+    const mk = `${d.getFullYear()}-${d.getMonth()}`;
+    if(!months[mk]) months[mk]={label:`${MONTHS[d.getMonth()]} ${d.getFullYear()}`,entries:[]};
+    months[mk].entries.push(entry);
+  });
+
+  let html = '';
+  Object.values(months).forEach(month=>{
+    html += `<div class="cal-section-hdr">${month.label}</div>`;
+    month.entries.forEach(entry=>{
+      const tasks = entry.tasks;
+      const total = tasks.length;
+      const completed = tasks.filter(t=>done[t.id]).length;
+      const pct = total > 0 ? Math.round((completed/total)*100) : 100;
+      const isToday = entry.date === TODAY_STR;
+      const isCurrent = SCHEDULE[currentDateIdx].date === entry.date;
+
+      let pillClass = 'zero-pill', pillText = `${total} tasks`;
+      if(total===0){ pillText='Rest'; pillClass='zero-pill'; }
+      else if(completed===total){ pillClass='all-pill'; pillText='✓ Done'; }
+      else if(completed>0){ pillClass='done-pill'; pillText=`${completed}/${total}`; }
+
+      html += `<div class="cal-item${isCurrent?' open':''}" id="cal_${entry.date}">
+        <div class="cal-hdr" onclick="toggleCal('${entry.date}')">
+          <div class="cal-date-info">
+            <h3>${formatDate(entry.date)}${isToday?'<span class="today-pill">TODAY</span>':''}</h3>
+            <p>${getDayName(entry.date)}</p>
+          </div>
+          <div class="cal-right">
+            <span class="cal-pill ${pillClass}">${pillText}</span>
+            <span class="expand-arr">▼</span>
+          </div>
+        </div>
+        <div class="mini-prog"><div class="mini-prog-fill" style="width:${pct}%"></div></div>
+        <div class="cal-tasks" id="calt_${entry.date}">`;
+      if(tasks.length === 0){
+        html += `<div style="text-align:center;padding:12px 0;color:var(--muted);font-size:13px;">Rest Day 🌙</div>`;
+      } else {
+        tasks.forEach(task=>{ html += buildTaskCard(task, ''); });
+      }
+      html += `</div></div>`;
+    });
+  });
+  container.innerHTML = html;
+}
+
+function toggleCal(dateStr){
+  const el = document.getElementById('cal_'+dateStr);
+  if(el) el.classList.toggle('open');
+}
+
+// ================================================================
+// PENDING TAB
+// ================================================================
+function renderPending(){
+  const done = loadDone();
+  const container = document.getElementById('pendingContainer');
+  let pendingTotal = 0;
+
+  let html = '';
+  SCHEDULE.forEach(entry=>{
+    // Only show pending from today or past dates
+    if(entry.date > TODAY_STR) return;
+    const pending = entry.tasks.filter(t=>!done[t.id]);
+    if(pending.length === 0) return;
+    pendingTotal += pending.length;
+    const isToday = entry.date === TODAY_STR;
+    html += `<div class="pending-group">
+      <div class="pending-date-hdr">
+        <span>${getDayName(entry.date)}, </span>
+        <span>${formatDate(entry.date)}</span>
+        ${isToday?'<span class="today-pill" style="margin-left:6px;">TODAY</span>':''}
+        <span style="float:right;color:var(--accent)">${pending.length} pending</span>
+      </div>`;
+    pending.forEach(task=>{ html += buildTaskCard(task,''); });
+    html += `</div>`;
+  });
+
+  document.getElementById('pendingBadge').textContent = pendingTotal === 0
+    ? '🎉 All done!' : `${pendingTotal} task${pendingTotal!==1?'s':''} pending`;
+
+  if(pendingTotal === 0){
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🏆</div>
+      <div class="empty-title">All Tasks Complete!</div>
+      <div class="empty-text">You've completed every task in your schedule.<br>Outstanding dedication!</div>
+    </div>`;
+  } else {
+    container.innerHTML = html;
+  }
+
+  // Update pending badge in nav
+  const badge = document.getElementById('pendingNavBadge');
+  if(pendingTotal > 0){
+    badge.textContent = pendingTotal > 99 ? '99+' : pendingTotal;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ================================================================
+// HEADER / OVERALL PROGRESS
+// ================================================================
+function updateHeader(){
+  const done = loadDone();
+  const allTasks = SCHEDULE.flatMap(e=>e.tasks);
+  const total = allTasks.length;
+  const completed = allTasks.filter(t=>done[t.id]).length;
+  const pct = total > 0 ? Math.round((completed/total)*100) : 0;
+  document.getElementById('overallPct').textContent = pct + '%';
+}
+
+// ================================================================
+// TAB SWITCHING
+// ================================================================
+function switchTab(tab){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+  if(tab==='calendar') renderCalendar();
+  if(tab==='pending') renderPending();
+}
+
+// ================================================================
+// FULL UPDATE (called after any task toggle)
+// ================================================================
+function updateAll(){
+  renderToday();
+  updateHeader();
+  // Re-render pending badge count
+  const done = loadDone();
+  const pendingTotal = SCHEDULE.filter(e=>e.date<=TODAY_STR).flatMap(e=>e.tasks).filter(t=>!done[t.id]).length;
+  const badge = document.getElementById('pendingNavBadge');
+  if(pendingTotal > 0){
+    badge.textContent = pendingTotal > 99 ? '99+' : pendingTotal;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+  // If calendar or pending tab is open, re-render
+  if(document.getElementById('tab-calendar').classList.contains('active')) renderCalendar();
+  if(document.getElementById('tab-pending').classList.contains('active')) renderPending();
+}
+
+// ================================================================
+// INIT
+// ================================================================
+function init(){
+  // Show quote
+  const q = getNextQuote();
+  document.getElementById('quoteText').textContent = `"${q.t}"`;
+  document.getElementById('quoteAuthor').textContent = `— ${q.a}`;
+
+  // Find today's index (or nearest future)
+  let idx = SCHEDULE.findIndex(e => e.date === TODAY_STR);
+  if(idx < 0){
+    // Find nearest date
+    const todayMs = new Date(TODAY_STR).getTime();
+    let minDiff = Infinity;
+    SCHEDULE.forEach((e,i)=>{
+      const diff = Math.abs(parseDate(e.date).getTime() - todayMs);
+      if(diff < minDiff){ minDiff=diff; idx=i; }
+    });
+  }
+  if(idx < 0) idx = 0;
+  currentDateIdx = idx;
+
+  renderToday();
+  updateHeader();
+
+  // Init pending badge
+  const done = loadDone();
+  const pendingTotal = SCHEDULE.filter(e=>e.date<=TODAY_STR).flatMap(e=>e.tasks).filter(t=>!done[t.id]).length;
+  const badge = document.getElementById('pendingNavBadge');
+  if(pendingTotal > 0){
+    badge.textContent = pendingTotal > 99 ? '99+' : pendingTotal;
+    badge.style.display = 'flex';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
